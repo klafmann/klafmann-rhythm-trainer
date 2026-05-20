@@ -8,14 +8,12 @@
 </head>
 <body>
 <div class="app">
-
 <header class="hero">
   <div>
     <div class="brand">Klafmann Practice｜節奏訓練</div>
     <h1>Rhythm Trainer <span>節奏練習</span></h1>
-    <p class="subtitle">Train timing, pulse and groove｜訓練拍子、穩定度與節奏感</p>
+    <p class="subtitle">Level 1 test: the rhythm changes every 4 beats｜Level 1 測試：每四拍轉一款新節奏</p>
   </div>
-
   <div class="score-panel">
     <div class="score-label">Accuracy｜準確率</div>
     <div class="score" id="accuracy">--%</div>
@@ -39,10 +37,7 @@
   <div class="control">
     <label>Level｜程度</label>
     <select id="level">
-      <option value="1">Level 1｜四分音符 Quarter Notes</option>
-      <option value="2">Level 2｜二分音符 Half Notes</option>
-      <option value="3">Level 3｜八分音符 Eighth Notes</option>
-      <option value="4">Level 4｜休止符 Rests</option>
+      <option value="1" selected>Level 1｜四款節奏循環 4 Rhythm Patterns</option>
     </select>
   </div>
 
@@ -58,24 +53,25 @@
     <div class="beat" id="b4">4</div>
   </div>
 
-  <div class="notation" id="notation"></div>
+  <div class="pattern-label" id="patternLabel">Pattern 1｜節奏 1</div>
+  <div class="notation-card">
+    <div id="notation"></div>
+  </div>
 
   <div class="judgement" id="judge">READY｜準備</div>
 
   <button id="tapBtn" class="tap-btn">TAP｜拍</button>
-
-  <p class="hint">Tap the button or press SPACEBAR｜可按 TAP 或鍵盤空白鍵</p>
+  <p class="hint">Tap only when there is a note. Do not tap on rests.｜見到音符先拍；休止符不要拍。</p>
 
   <div class="stats">
     <div class="stat"><span id="perfect">0</span><small>Perfect｜完美</small></div>
     <div class="stat"><span id="good">0</span><small>Good｜準確</small></div>
     <div class="stat"><span id="early">0</span><small>Early｜太早</small></div>
-    <div class="stat"><span id="late">0</span><small>Late｜太遲</small></div>
+    <div class="stat"><span id="late">0</span><small>Late / Rest｜太遲 / 休止拍錯</small></div>
   </div>
 
-  <p class="sound-note">如沒有聲音，請先按 START 一次；手機請確認不是靜音模式。If there is no sound, tap START once and check silent mode on mobile.</p>
+  <p class="sound-note">If there is no click sound, press START again and check browser / phone silent mode.｜如無聲，請再按 START，並檢查瀏覽器或手機靜音模式。</p>
 </section>
-
 </div>
 <script src="app.js"></script>
 </body>
