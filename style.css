@@ -1,0 +1,46 @@
+*{box-sizing:border-box}
+body{margin:0;background:#0e0e0e;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans HK","Segoe UI",Arial,sans-serif}
+.app{width:min(1120px,94vw);margin:auto;padding:38px 0}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:26px}
+.brand{color:#d8b56d;font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(38px,6vw,70px);margin:0;line-height:1}
+h1 span{display:block;font-size:.46em;margin-top:10px;color:#d8b56d}
+.subtitle{color:#cfcfcf;font-size:17px;margin-top:12px;line-height:1.5}
+.score-panel{background:#1c1c1c;padding:20px;border-radius:24px;min-width:230px;text-align:center;border:1px solid rgba(255,255,255,.08)}
+.score-label{color:#d8b56d;font-size:13px}
+.score{font-size:44px;font-weight:800;margin:8px 0}
+.combo{font-size:18px;font-weight:700;color:#ffe08a}
+.controls{display:grid;grid-template-columns:1fr 1.5fr auto auto;gap:14px;margin-bottom:24px}
+.control label{display:block;font-size:13px;color:#bcbcbc;margin-bottom:8px}
+select{width:100%;padding:14px;border-radius:16px;background:#1d1d1d;color:#fff;border:1px solid rgba(255,255,255,.12);font-size:16px}
+.btn{padding:14px 20px;border-radius:16px;border:none;font-weight:800;cursor:pointer;font-size:15px;background:#272727;color:#fff;white-space:nowrap}
+.primary{background:#d8b56d;color:#111}
+.trainer{background:#171717;padding:26px;border-radius:30px;border:1px solid rgba(255,255,255,.08)}
+.beat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.beat{height:78px;display:flex;align-items:center;justify-content:center;border-radius:22px;background:#222;font-size:34px;font-weight:800;color:#666;transition:.08s}
+.beat.active{background:#d8b56d;color:#111;transform:scale(1.03);box-shadow:0 0 30px rgba(216,181,109,.5)}
+.pattern-label{text-align:center;color:#d8b56d;font-weight:800;margin:6px 0 12px;font-size:18px}
+.notation-card{background:#f4eedf;border-radius:24px;padding:18px;margin-bottom:20px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+#notation svg{width:100%;height:auto;display:block}
+.judgement{height:58px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;margin-bottom:16px;text-align:center}
+.tap-btn{width:100%;height:142px;border:none;border-radius:32px;background:linear-gradient(180deg,#fff3ca,#d8b56d);font-size:46px;font-weight:900;cursor:pointer;box-shadow:0 14px 0 #7b6330;transition:.05s}
+.tap-btn:active{transform:translateY(6px);box-shadow:0 8px 0 #7b6330}
+.tap-btn.flash{filter:brightness(1.18)}
+.hint,.sound-note{text-align:center;color:#bdbdbd;margin-top:16px;line-height:1.5}
+.sound-note{font-size:13px;color:#999}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.stat{background:#202020;padding:18px;border-radius:20px;text-align:center}
+.stat span{display:block;font-size:36px;font-weight:800}
+.stat small{color:#b8b8b8}
+.perfect{color:#ffe08a}.good{color:#9cffb1}.bad{color:#ff9d9d}
+@media(max-width:760px){
+.app{padding:24px 0}
+.hero{flex-direction:column;align-items:flex-start}
+.controls{grid-template-columns:1fr}
+.stats{grid-template-columns:repeat(2,1fr)}
+.tap-btn{height:118px;font-size:35px}
+.score-panel{width:100%}
+.beat{height:64px}
+.judgement{font-size:24px}
+.notation-card{padding:10px}
+}
