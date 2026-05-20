@@ -23,9 +23,8 @@ let combo=0;
 let patternIndex=0;
 let stats={perfect:0,good:0,early:0,late:0};
 
-// Four patterns based on the uploaded reference.
-// q = quarter note tap, h = half note tap, r = rest / no tap.
-// Each item lasts one beat in this MVP timing engine.
+// Level 1 only.
+// q = quarter note tap, h = half note tap then hold, r = quarter rest / no tap.
 const patterns=[
   {name:'Pattern 1｜節奏 1', beats:['q','q','q','q']},
   {name:'Pattern 2｜節奏 2', beats:['q','q','h','hold']},
@@ -56,7 +55,6 @@ function clickSound(strong=false){
   osc.start(now);
   osc.stop(now + 0.07);
 
-  // extra low transient to make phone speakers more audible
   const osc2=audioCtx.createOscillator();
   const gain2=audioCtx.createGain();
   osc2.type='triangle';
@@ -72,56 +70,66 @@ function clickSound(strong=false){
 function renderNotation(){
   const p=patterns[patternIndex];
   patternLabel.textContent=p.name;
-  const xs=[170,360,550,740];
-  let notes='';
+
+  const xs=[210,385,560,735];
+  let symbols='';
 
   p.beats.forEach((type,i)=>{
     const x=xs[i];
-    if(type==='q'){
-      notes += noteSVG(x,98,false);
-    }else if(type==='h'){
-      notes += noteSVG(x,98,true);
-    }else if(type==='r'){
-      notes += restSVG(x,73);
-    }
+    if(type==='q') symbols += quarterNote(x,105);
+    if(type==='h') symbols += halfNote(x,105);
+    if(type==='r') symbols += quarterRest(x,72);
   });
 
-  notation.innerHTML = `
-  <svg viewBox="0 0 900 190" role="img" aria-label="${p.name}">
-    <rect x="0" y="0" width="900" height="190" fill="#f4eedf"/>
-    <text x="34" y="72" font-family="Georgia, serif" font-size="28" fill="#111">Rhythm</text>
-    ${staffSVG()}
-    <text x="142" y="85" font-family="Georgia, serif" font-size="56" font-weight="700" fill="#111">4</text>
-    <text x="142" y="130" font-family="Georgia, serif" font-size="56" font-weight="700" fill="#111">4</text>
-    ${notes}
-    <line x1="835" y1="46" x2="835" y2="126" stroke="#111" stroke-width="3"/>
+  notation.innerHTML=`
+  <svg viewBox="0 0 900 210" role="img" aria-label="${p.name}">
+    <rect x="0" y="0" width="900" height="210" fill="#f4eedf"/>
+    ${timeSignature(60,52)}
+    ${measureGuide()}
+    ${symbols}
   </svg>`;
 }
 
-function staffSVG(){
-  let s='';
-  for(let i=0;i<5;i++){
-    const y=46+i*20;
-    s += `<line x1="120" y1="${y}" x2="835" y2="${y}" stroke="#111" stroke-width="1.7"/>`;
-  }
-  s += `<text x="116" y="122" font-family="Georgia, serif" font-size="86" fill="#111">𝄞</text>`;
-  return s;
+function timeSignature(x,y){
+  return `
+  <g transform="translate(${x},${y})">
+    <text x="0" y="0" font-family="Georgia, serif" font-size="82" font-weight="700" fill="#111">4</text>
+    <text x="0" y="78" font-family="Georgia, serif" font-size="82" font-weight="700" fill="#111">4</text>
+  </g>`;
 }
 
-function noteSVG(x,y,hollow){
-  const fill=hollow?'#f4eedf':'#111';
-  const stroke='#111';
+function measureGuide(){
   return `
-  <ellipse cx="${x}" cy="${y}" rx="13" ry="9" transform="rotate(-18 ${x} ${y})" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-  <line x1="${x+12}" y1="${y-4}" x2="${x+12}" y2="${y-64}" stroke="#111" stroke-width="3"/>
-  <line x1="${x+12}" y1="${y-64}" x2="${x+42}" y2="${y-64}" stroke="#111" stroke-width="3"/>`;
+  <line x1="145" y1="42" x2="145" y2="168" stroke="#111" stroke-width="3"/>
+  <line x1="835" y1="42" x2="835" y2="168" stroke="#111" stroke-width="3"/>
+  <line x1="842" y1="42" x2="842" y2="168" stroke="#111" stroke-width="6"/>`;
 }
 
-function restSVG(x,y){
-  // Drawn with normal SVG shapes, no special music font.
+function quarterNote(x,y){
   return `
-  <path d="M ${x-12} ${y} L ${x+10} ${y} L ${x-4} ${y+22} L ${x+14} ${y+22}" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="${x-6}" cy="${y+40}" r="4.5" fill="#111"/>`;
+  <g>
+    <ellipse cx="${x}" cy="${y}" rx="18" ry="13" transform="rotate(-18 ${x} ${y})" fill="#111"/>
+    <line x1="${x+16}" y1="${y-5}" x2="${x+16}" y2="${y-96}" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  </g>`;
+}
+
+function halfNote(x,y){
+  return `
+  <g>
+    <ellipse cx="${x}" cy="${y}" rx="18" ry="13" transform="rotate(-18 ${x} ${y})" fill="#f4eedf" stroke="#111" stroke-width="5"/>
+    <line x1="${x+16}" y1="${y-5}" x2="${x+16}" y2="${y-96}" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  </g>`;
+}
+
+function quarterRest(x,y){
+  // Quarter rest drawn as SVG path, not a font glyph.
+  return `
+  <g transform="translate(${x},${y})">
+    <path d="M 0 0 C 26 18, 20 36, -2 47 C 23 60, 26 82, 5 101"
+      fill="none" stroke="#111" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 2 101 C -11 116, -17 129, -5 145"
+      fill="none" stroke="#111" stroke-width="9" stroke-linecap="round"/>
+  </g>`;
 }
 
 function updateAccuracy(){
@@ -147,10 +155,6 @@ function setJudge(text,cls=''){
 function setBeatDisplay(){
   for(let i=1;i<=4;i++) document.getElementById('b'+i).classList.remove('active');
   document.getElementById('b'+(beat+1)).classList.add('active');
-}
-
-function currentBeatType(){
-  return patterns[patternIndex].beats[beat];
 }
 
 function pulse(){
@@ -204,7 +208,7 @@ function tap(){
   if(type==='r' || type==='hold'){
     stats.late++;
     combo=0;
-    setJudge(type==='r' ? 'REST｜休止' : 'HOLD｜延長','bad');
+    setJudge(type==='r'?'REST｜休止':'HOLD｜延長','bad');
     updateStats();
     return;
   }

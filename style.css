@@ -20,7 +20,7 @@ select{width:100%;padding:14px;border-radius:16px;background:#1d1d1d;color:#fff;
 .beat{height:78px;display:flex;align-items:center;justify-content:center;border-radius:22px;background:#222;font-size:34px;font-weight:800;color:#666;transition:.08s}
 .beat.active{background:#d8b56d;color:#111;transform:scale(1.03);box-shadow:0 0 30px rgba(216,181,109,.5)}
 .pattern-label{text-align:center;color:#d8b56d;font-weight:800;margin:6px 0 12px;font-size:18px}
-.notation-card{background:#f4eedf;border-radius:24px;padding:18px 18px 14px;margin-bottom:20px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.notation-card{background:#f4eedf;border-radius:24px;padding:18px;margin-bottom:20px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 #notation svg{width:100%;height:auto;display:block}
 .judgement{height:58px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;margin-bottom:16px;text-align:center}
 .tap-btn{width:100%;height:142px;border:none;border-radius:32px;background:linear-gradient(180deg,#fff3ca,#d8b56d);font-size:46px;font-weight:900;cursor:pointer;box-shadow:0 14px 0 #7b6330;transition:.05s}
@@ -42,5 +42,5 @@ select{width:100%;padding:14px;border-radius:16px;background:#1d1d1d;color:#fff;
 .score-panel{width:100%}
 .beat{height:64px}
 .judgement{font-size:24px}
-.notation-card{padding:12px}
+.notation-card{padding:10px}
 }
