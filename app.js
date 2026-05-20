@@ -2,29 +2,30 @@ const tapBtn=document.getElementById('tapBtn');
 const startBtn=document.getElementById('startBtn');
 const stopBtn=document.getElementById('stopBtn');
 const judge=document.getElementById('judge');
-const accuracy=document.getElementById('accuracy');
+const accuracyEl=document.getElementById('accuracy');
 const comboEl=document.getElementById('combo');
-const perfectEl=document.getElementById('perfect');
-const goodEl=document.getElementById('good');
-const earlyEl=document.getElementById('early');
-const lateEl=document.getElementById('late');
+const scoreEl=document.getElementById('score');
+const beatNo=document.getElementById('beatNo');
+const measureNo=document.getElementById('measureNo');
 const tempo=document.getElementById('tempo');
 const notation=document.getElementById('notation');
-const patternLabel=document.getElementById('patternLabel');
-
-const QUARTER_NOTE_URL='https://upload.wikimedia.org/wikipedia/commons/f/fb/Music-quarternote.svg';
-const QUARTER_REST_URL='https://upload.wikimedia.org/wikipedia/commons/0/03/QuarterRest.svg';
+const stageTitle=document.getElementById('stageTitle');
+const cyclePill=document.getElementById('cyclePill');
 
 let audioCtx=null;
-let running=false;
-let interval=null;
-let beat=0;
+let timer=null;
 let bpm=84;
 let beatMs=60000/bpm;
-let lastBeatTime=0;
-let combo=0;
 let patternIndex=0;
-let stats={perfect:0,good:0,early:0,late:0};
+let beatIndex=0;
+let phase='idle'; // demo, user, answer
+let userTapTimes=[];
+let expectedTimes=[];
+let userStartTime=0;
+let combo=0;
+let score=0;
+let attempts=0;
+let goodAttempts=0;
 
 const patterns=[
   {name:'Pattern 1｜節奏 1', beats:['q','q','q','q']},
@@ -41,182 +42,283 @@ function ensureAudio(){
   if(audioCtx.state==='suspended') audioCtx.resume();
 }
 
-function clickSound(strong=false){
+function tone(freq=1000,dur=0.07,gainValue=0.28,type='square'){
   if(!audioCtx) return;
   const now=audioCtx.currentTime;
   const osc=audioCtx.createOscillator();
   const gain=audioCtx.createGain();
-  osc.type='square';
-  osc.frequency.setValueAtTime(strong ? 1760 : 1100, now);
-  gain.gain.setValueAtTime(strong ? 0.55 : 0.38, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.065);
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,now);
+  gain.gain.setValueAtTime(gainValue,now);
+  gain.gain.exponentialRampToValueAtTime(0.001,now+dur);
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.start(now);
-  osc.stop(now + 0.07);
+  osc.stop(now+dur);
 }
 
-function renderNotation(){
-  const p=patterns[patternIndex];
-  patternLabel.textContent=p.name;
+function metronome(strong=false){ tone(strong?1700:1050,0.06,strong?0.36:0.24,'square'); }
+function noteClick(){ tone(760,0.09,0.34,'triangle'); }
+function answerClick(){ tone(520,0.11,0.32,'sine'); }
+function badClick(){ tone(180,0.14,0.28,'sawtooth'); }
 
-  const xs=[210,385,560,735];
+function currentPattern(){return patterns[patternIndex];}
+
+function renderNotation(active=-1){
+  const p=currentPattern();
+  const xs=[230,405,580,755];
   let symbols='';
-
   p.beats.forEach((type,i)=>{
-    const x=xs[i];
-    if(type==='q') symbols += quarterNoteImage(x,45);
-    if(type==='h') symbols += halfNoteImage(x,45);
-    if(type==='r') symbols += quarterRestImage(x,54);
+    const cls=i===active?'current-symbol':'';
+    if(type==='q') symbols+=quarterNote(xs[i],84,cls);
+    if(type==='h') symbols+=halfNote(xs[i],84,cls);
+    if(type==='r') symbols+=quarterRest(xs[i],66,cls);
   });
 
   notation.innerHTML=`
-  <svg viewBox="0 0 900 210" role="img" aria-label="${p.name}">
-    <rect x="0" y="0" width="900" height="210" fill="#f4eedf"/>
-    ${timeSignature(60,52)}
-    ${measureGuide()}
+  <svg viewBox="0 0 960 250" role="img" aria-label="${p.name}">
+    <rect x="0" y="0" width="960" height="250" fill="#fffdfa"/>
+    ${timeSignature(45,58)}
+    ${barLine(145,45,190,2)}
+    ${barLine(330,45,190,1)}
+    ${barLine(505,45,190,1)}
+    ${barLine(680,45,190,1)}
+    ${barLine(875,45,190,2)}
+    ${barLine(888,45,190,5)}
     ${symbols}
+    <text x="230" y="220" text-anchor="middle" font-size="28" font-weight="800" fill="#bd8f34">1</text>
+    <text x="405" y="220" text-anchor="middle" font-size="28" font-weight="800" fill="#bd8f34">2</text>
+    <text x="580" y="220" text-anchor="middle" font-size="28" font-weight="800" fill="#bd8f34">3</text>
+    <text x="755" y="220" text-anchor="middle" font-size="28" font-weight="800" fill="#bd8f34">4</text>
   </svg>`;
 }
 
 function timeSignature(x,y){
   return `
   <g transform="translate(${x},${y})">
-    <text x="0" y="0" font-family="Georgia, serif" font-size="82" font-weight="700" fill="#111">4</text>
-    <text x="0" y="78" font-family="Georgia, serif" font-size="82" font-weight="700" fill="#111">4</text>
+    <text x="0" y="0" font-family="Georgia, serif" font-size="78" font-weight="700" fill="#111">4</text>
+    <text x="0" y="72" font-family="Georgia, serif" font-size="78" font-weight="700" fill="#111">4</text>
   </g>`;
 }
 
-function measureGuide(){
-  return `
-  <line x1="145" y1="42" x2="145" y2="168" stroke="#111" stroke-width="3"/>
-  <line x1="835" y1="42" x2="835" y2="168" stroke="#111" stroke-width="3"/>
-  <line x1="842" y1="42" x2="842" y2="168" stroke="#111" stroke-width="6"/>`;
+function barLine(x,y,h,w){
+  return `<line x1="${x}" y1="${y}" x2="${x}" y2="${h}" stroke="#111" stroke-width="${w}"/>`;
 }
 
-function quarterNoteImage(x,y){
-  return `<image href="${QUARTER_NOTE_URL}" x="${x-50}" y="${y-34}" width="100" height="100" preserveAspectRatio="xMidYMid meet"/>`;
-}
-
-function halfNoteImage(x,y){
-  // keep local half-note drawing for now; the critical rest glyph uses Wikimedia image.
+function quarterNote(x,y,cls=''){
   return `
-  <g transform="translate(${x},${y})">
-    <ellipse cx="0" cy="61" rx="18" ry="13" transform="rotate(-18 0 61)" fill="#f4eedf" stroke="#111" stroke-width="5"/>
-    <line x1="16" y1="56" x2="16" y2="-35" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <g class="${cls}">
+    <ellipse cx="${x}" cy="${y+42}" rx="20" ry="14" transform="rotate(-18 ${x} ${y+42})" fill="#111"/>
+    <line x1="${x+18}" y1="${y+37}" x2="${x+18}" y2="${y-58}" stroke="#111" stroke-width="5.2" stroke-linecap="round"/>
   </g>`;
 }
 
-function quarterRestImage(x,y){
-  // Direct Wikimedia quarter-rest SVG, scaled up from the original 12x25 file.
-  return `<image href="${QUARTER_REST_URL}" x="${x-34}" y="${y-8}" width="68" height="112" preserveAspectRatio="xMidYMid meet"/>`;
+function halfNote(x,y,cls=''){
+  return `
+  <g class="${cls}">
+    <ellipse cx="${x}" cy="${y+42}" rx="20" ry="14" transform="rotate(-18 ${x} ${y+42})" fill="#fffdfa" stroke="#111" stroke-width="5"/>
+    <line x1="${x+18}" y1="${y+37}" x2="${x+18}" y2="${y-58}" stroke="#111" stroke-width="5.2" stroke-linecap="round"/>
+  </g>`;
 }
 
-function updateAccuracy(){
-  const total=stats.perfect+stats.good+stats.early+stats.late;
-  const goodTotal=stats.perfect+stats.good;
-  accuracy.textContent=total?Math.round(goodTotal/total*100)+'%':'--%';
+function quarterRest(x,y,cls=''){
+  // Adjusted by hand to match a standard quarter rest silhouette and relative size.
+  return `
+  <g class="${cls}" transform="translate(${x-12},${y}) scale(1.05)">
+    <path d="M 20 0
+             C 38 20, 36 32, 18 46
+             C 38 58, 42 76, 20 92
+             C 8 101, 6 115, 20 130"
+          fill="none" stroke="#111" stroke-width="9"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>`;
 }
 
-function updateStats(){
-  perfectEl.textContent=stats.perfect;
-  goodEl.textContent=stats.good;
-  earlyEl.textContent=stats.early;
-  lateEl.textContent=stats.late;
-  updateAccuracy();
-  comboEl.textContent='COMBO｜連擊 x'+combo;
+function updateTop(){
+  comboEl.textContent=combo;
+  scoreEl.textContent=score;
+  measureNo.textContent=patternIndex+1;
+  beatNo.textContent=phase==='idle'?'-':beatIndex+1;
+  accuracyEl.textContent=attempts?Math.round((goodAttempts/attempts)*100)+'%':'0%';
 }
 
 function setJudge(text,cls=''){
-  judge.className='judgement '+cls;
+  judge.className='judge-main '+cls;
   judge.textContent=text;
 }
 
-function setBeatDisplay(){
-  for(let i=1;i<=4;i++) document.getElementById('b'+i).classList.remove('active');
-  document.getElementById('b'+(beat+1)).classList.add('active');
-}
-
-function pulse(){
-  setBeatDisplay();
-  clickSound(beat===0);
-  lastBeatTime=performance.now();
-
-  beat++;
-  if(beat>=4){
-    beat=0;
-    patternIndex=(patternIndex+1)%patterns.length;
-    renderNotation();
-  }
+function clearTimer(){
+  if(timer) clearTimeout(timer);
+  timer=null;
 }
 
 function start(){
   ensureAudio();
-  clearInterval(interval);
-  running=true;
-  beat=0;
-  patternIndex=0;
-  combo=0;
-  stats={perfect:0,good:0,early:0,late:0};
+  clearTimer();
   bpm=parseInt(tempo.value,10);
   beatMs=60000/bpm;
-  renderNotation();
-  updateStats();
-  setJudge('START｜開始');
-  pulse();
-  interval=setInterval(pulse,beatMs);
+  patternIndex=0;
+  combo=0;
+  score=0;
+  attempts=0;
+  goodAttempts=0;
+  setJudge('-');
+  startQuestion();
 }
 
 function stop(){
-  running=false;
-  clearInterval(interval);
-  setJudge('STOPPED｜已停止');
+  clearTimer();
+  phase='idle';
+  tapBtn.classList.add('disabled');
+  stageTitle.textContent='STOPPED｜已停止';
+  cyclePill.textContent='按 START 重新開始｜Press START to restart';
+  beatNo.textContent='-';
+}
+
+function startQuestion(){
+  phase='demo';
+  beatIndex=0;
+  userTapTimes=[];
+  expectedTimes=[];
+  tapBtn.classList.add('disabled');
+  stageTitle.innerHTML='<b>題目示範</b>｜Listen to the question';
+  cyclePill.textContent='系統會響一次題目｜The system plays the question once';
+  renderNotation(-1);
+  updateTop();
+  timer=setTimeout(playDemoBeat,500);
+}
+
+function playDemoBeat(){
+  const p=currentPattern();
+  renderNotation(beatIndex);
+  updateTop();
+  metronome(beatIndex===0);
+  const type=p.beats[beatIndex];
+  if(type==='q'||type==='h') noteClick();
+
+  beatIndex++;
+  if(beatIndex<4){
+    timer=setTimeout(playDemoBeat,beatMs);
+  }else{
+    timer=setTimeout(startUserTurn,beatMs);
+  }
+}
+
+function startUserTurn(){
+  phase='user';
+  beatIndex=0;
+  userTapTimes=[];
+  expectedTimes=[];
+  userStartTime=performance.now()+500;
+  tapBtn.classList.remove('disabled');
+  stageTitle.innerHTML='<b>輪到你</b>｜Your turn';
+  cyclePill.textContent='跟返剛才節奏拍一次｜Tap the rhythm once';
+  setJudge('-');
+  renderNotation(-1);
+  updateTop();
+  timer=setTimeout(userBeatTick,500);
+}
+
+function userBeatTick(){
+  renderNotation(beatIndex);
+  updateTop();
+  metronome(beatIndex===0);
+  const type=currentPattern().beats[beatIndex];
+  if(type==='q'||type==='h') expectedTimes.push(performance.now());
+
+  beatIndex++;
+  if(beatIndex<4){
+    timer=setTimeout(userBeatTick,beatMs);
+  }else{
+    timer=setTimeout(evaluateUserTurn,beatMs*0.85);
+  }
 }
 
 function tap(){
-  if(!running){
-    setJudge('PRESS START｜請先開始','bad');
+  if(phase!=='user'){
+    badClick();
+    setJudge('WAIT｜請等候','miss');
     return;
   }
-
   tapBtn.classList.add('flash');
-  setTimeout(()=>tapBtn.classList.remove('flash'),80);
+  setTimeout(()=>tapBtn.classList.remove('flash'),70);
+  userTapTimes.push(performance.now());
+  noteClick();
+}
 
-  const justPlayedBeat=(beat+3)%4;
-  const type=patterns[patternIndex].beats[justPlayedBeat];
+function evaluateUserTurn(){
+  tapBtn.classList.add('disabled');
+  attempts++;
 
-  if(type==='r' || type==='hold'){
-    stats.late++;
-    combo=0;
-    setJudge(type==='r'?'REST｜休止':'HOLD｜延長','bad');
-    updateStats();
-    return;
-  }
-
-  const diff=performance.now()-lastBeatTime;
-  const altDiff=diff-beatMs;
-  const best=Math.abs(diff)<Math.abs(altDiff)?diff:altDiff;
-  const abs=Math.abs(best);
-
-  if(abs<=45){
-    stats.perfect++;
+  const result=scoreAttempt(expectedTimes,userTapTimes);
+  if(result.grade==='perfect'){
     combo++;
+    score+=100;
+    goodAttempts++;
     setJudge('PERFECT｜完美','perfect');
-  }else if(abs<=95){
-    stats.good++;
+  }else if(result.grade==='good'){
     combo++;
-    setJudge('GOOD｜準確','good');
-  }else if(best<0){
-    stats.early++;
+    score+=70;
+    goodAttempts++;
+    setJudge('GOOD｜良好','good');
+  }else if(result.grade==='early'){
     combo=0;
-    setJudge('EARLY｜太早','bad');
+    score+=20;
+    setJudge('EARLY｜稍早','early');
+  }else if(result.grade==='late'){
+    combo=0;
+    score+=20;
+    setJudge('LATE｜稍遲','late');
   }else{
-    stats.late++;
     combo=0;
-    setJudge('LATE｜太遲','bad');
+    badClick();
+    setJudge('MISS｜錯誤','miss');
   }
 
-  updateStats();
+  updateTop();
+  timer=setTimeout(startAnswer,900);
+}
+
+function scoreAttempt(expected,actual){
+  if(actual.length!==expected.length){
+    return {grade:'miss'};
+  }
+  let diffs=expected.map((t,i)=>actual[i]-t);
+  let avg=diffs.reduce((a,b)=>a+b,0)/diffs.length;
+  let maxAbs=Math.max(...diffs.map(x=>Math.abs(x)));
+
+  if(maxAbs<=55) return {grade:'perfect'};
+  if(maxAbs<=110) return {grade:'good'};
+  if(avg<-60) return {grade:'early'};
+  if(avg>60) return {grade:'late'};
+  return {grade:'miss'};
+}
+
+function startAnswer(){
+  phase='answer';
+  beatIndex=0;
+  stageTitle.innerHTML='<b>系統答案</b>｜Correct answer';
+  cyclePill.textContent='系統拍一次正確答案｜The system plays the answer once';
+  renderNotation(-1);
+  updateTop();
+  timer=setTimeout(playAnswerBeat,400);
+}
+
+function playAnswerBeat(){
+  const p=currentPattern();
+  renderNotation(beatIndex);
+  updateTop();
+  metronome(beatIndex===0);
+  const type=p.beats[beatIndex];
+  if(type==='q'||type==='h') answerClick();
+
+  beatIndex++;
+  if(beatIndex<4){
+    timer=setTimeout(playAnswerBeat,beatMs);
+  }else{
+    patternIndex=(patternIndex+1)%patterns.length;
+    timer=setTimeout(startQuestion,beatMs);
+  }
 }
 
 tapBtn.addEventListener('click',tap);
@@ -228,6 +330,8 @@ document.addEventListener('keydown',e=>{
     tap();
   }
 });
+document.addEventListener('click',()=>ensureAudio(),{once:true});
 
+tapBtn.classList.add('disabled');
 renderNotation();
-updateStats();
+updateTop();

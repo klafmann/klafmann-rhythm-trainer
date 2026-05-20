@@ -8,22 +8,79 @@
 </head>
 <body>
 <div class="app">
-<header class="hero">
-  <div>
-    <div class="brand">Klafmann Practice｜節奏訓練</div>
-    <h1>Rhythm Trainer <span>節奏練習</span></h1>
-    <p class="subtitle">Level 1 test: the rhythm changes every 4 beats｜Level 1 測試：每四拍轉一款新節奏</p>
+
+<header class="topbar">
+  <div class="title-wrap">
+    <div class="music-icon">♪</div>
+    <div>
+      <h1>Klafmann Practice｜節奏訓練</h1>
+      <p>Rhythm Trainer｜Rhythm Training</p>
+    </div>
   </div>
-  <div class="score-panel">
-    <div class="score-label">Accuracy｜準確率</div>
-    <div class="score" id="accuracy">--%</div>
-    <div class="combo" id="combo">COMBO｜連擊 x0</div>
+  <div class="top-actions">
+    <button class="small-btn" id="settingsBtn">⚙ 設定 Settings</button>
+    <button class="small-btn" id="helpBtn">? 使用說明 Help</button>
   </div>
 </header>
 
-<section class="controls">
-  <div class="control">
-    <label>Tempo｜速度</label>
+<section class="summary-card">
+  <div class="summary-item">
+    <span>拍號 Time Signature</span>
+    <strong>4/4</strong>
+  </div>
+  <div class="summary-item">
+    <span>小節 Measure</span>
+    <strong><b id="measureNo">1</b> / 4</strong>
+  </div>
+  <div class="summary-item">
+    <span>拍子 Beat</span>
+    <strong><b id="beatNo">-</b> / 4</strong>
+  </div>
+  <div class="summary-item">
+    <span>連擊 Combo</span>
+    <strong id="combo">0</strong>
+  </div>
+  <div class="summary-item">
+    <span>分數 Score</span>
+    <strong id="score">0</strong>
+  </div>
+  <div class="summary-item">
+    <span>準確度 Accuracy</span>
+    <strong id="accuracy">0%</strong>
+  </div>
+</section>
+
+<section class="stage-card">
+  <div class="stage-title" id="stageTitle">按 START 開始｜Press START</div>
+
+  <div class="notation-wrap">
+    <div id="notation"></div>
+  </div>
+
+  <div class="cycle-pill" id="cyclePill">流程：題目示範 → 你拍一次 → 系統答案 → 下一題</div>
+</section>
+
+<section class="play-area">
+  <button id="tapBtn" class="tap-btn">
+    <span class="tap-icon">☝</span>
+    <span>TAP</span>
+    <small>點擊 Click</small>
+  </button>
+
+  <div class="judge-card">
+    <div class="judge-title">判定 Judgment</div>
+    <div class="judge-main" id="judge">-</div>
+    <div class="judge-scale">
+      <span class="perfect">完美 PERFECT</span>
+      <span class="good">良好 GOOD</span>
+      <span class="early">稍早 EARLY</span>
+      <span class="late">稍遲 LATE</span>
+      <span class="miss">錯誤 MISS</span>
+    </div>
+  </div>
+
+  <div class="metro-card">
+    <div class="metro-title">節拍器 Metronome</div>
     <select id="tempo">
       <option>60</option>
       <option>72</option>
@@ -32,46 +89,16 @@
       <option>108</option>
       <option>120</option>
     </select>
+    <button id="startBtn" class="start-btn">START｜開始</button>
+    <button id="stopBtn" class="stop-btn">STOP｜停止</button>
   </div>
-
-  <div class="control">
-    <label>Level｜程度</label>
-    <select id="level">
-      <option value="1" selected>Level 1｜四款節奏循環 4 Rhythm Patterns</option>
-    </select>
-  </div>
-
-  <button id="startBtn" class="btn primary">START｜開始</button>
-  <button id="stopBtn" class="btn">STOP｜停止</button>
 </section>
 
-<section class="trainer">
-  <div class="beat-row">
-    <div class="beat active" id="b1">1</div>
-    <div class="beat" id="b2">2</div>
-    <div class="beat" id="b3">3</div>
-    <div class="beat" id="b4">4</div>
-  </div>
-
-  <div class="pattern-label" id="patternLabel">Pattern 1｜節奏 1</div>
-  <div class="notation-card">
-    <div id="notation"></div>
-  </div>
-
-  <div class="judgement" id="judge">READY｜準備</div>
-
-  <button id="tapBtn" class="tap-btn">TAP｜拍</button>
-  <p class="hint">Tap only when there is a note. Do not tap on rests.｜見到音符先拍；休止符不要拍。</p>
-
-  <div class="stats">
-    <div class="stat"><span id="perfect">0</span><small>Perfect｜完美</small></div>
-    <div class="stat"><span id="good">0</span><small>Good｜準確</small></div>
-    <div class="stat"><span id="early">0</span><small>Early｜太早</small></div>
-    <div class="stat"><span id="late">0</span><small>Late / Rest｜太遲 / 休止拍錯</small></div>
-  </div>
-
-  <p class="sound-note">Symbols use Wikimedia Commons music images for cleaner notation.｜音符及休止符改用 Wikimedia Commons 圖像。</p>
+<section class="note-card">
+  🔊 如果聽不到聲音，請先點擊畫面任意位置，再按 START。<br>
+  If you can't hear the sound, please tap anywhere on the screen first, then press START.
 </section>
+
 </div>
 <script src="app.js"></script>
 </body>
