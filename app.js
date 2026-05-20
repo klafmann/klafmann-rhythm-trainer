@@ -12,6 +12,9 @@ const tempo=document.getElementById('tempo');
 const notation=document.getElementById('notation');
 const patternLabel=document.getElementById('patternLabel');
 
+const QUARTER_NOTE_URL='https://upload.wikimedia.org/wikipedia/commons/f/fb/Music-quarternote.svg';
+const QUARTER_REST_URL='https://upload.wikimedia.org/wikipedia/commons/0/03/QuarterRest.svg';
+
 let audioCtx=null;
 let running=false;
 let interval=null;
@@ -23,8 +26,6 @@ let combo=0;
 let patternIndex=0;
 let stats={perfect:0,good:0,early:0,late:0};
 
-// Level 1 only.
-// q = quarter note tap, h = half note tap then hold, r = quarter rest / no tap.
 const patterns=[
   {name:'Pattern 1｜節奏 1', beats:['q','q','q','q']},
   {name:'Pattern 2｜節奏 2', beats:['q','q','h','hold']},
@@ -43,7 +44,6 @@ function ensureAudio(){
 function clickSound(strong=false){
   if(!audioCtx) return;
   const now=audioCtx.currentTime;
-
   const osc=audioCtx.createOscillator();
   const gain=audioCtx.createGain();
   osc.type='square';
@@ -54,17 +54,6 @@ function clickSound(strong=false){
   gain.connect(audioCtx.destination);
   osc.start(now);
   osc.stop(now + 0.07);
-
-  const osc2=audioCtx.createOscillator();
-  const gain2=audioCtx.createGain();
-  osc2.type='triangle';
-  osc2.frequency.setValueAtTime(strong ? 520 : 390, now);
-  gain2.gain.setValueAtTime(strong ? 0.18 : 0.12, now);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-  osc2.connect(gain2);
-  gain2.connect(audioCtx.destination);
-  osc2.start(now);
-  osc2.stop(now + 0.085);
 }
 
 function renderNotation(){
@@ -76,9 +65,9 @@ function renderNotation(){
 
   p.beats.forEach((type,i)=>{
     const x=xs[i];
-    if(type==='q') symbols += quarterNote(x,105);
-    if(type==='h') symbols += halfNote(x,105);
-    if(type==='r') symbols += quarterRest(x,72);
+    if(type==='q') symbols += quarterNoteImage(x,45);
+    if(type==='h') symbols += halfNoteImage(x,45);
+    if(type==='r') symbols += quarterRestImage(x,54);
   });
 
   notation.innerHTML=`
@@ -105,31 +94,22 @@ function measureGuide(){
   <line x1="842" y1="42" x2="842" y2="168" stroke="#111" stroke-width="6"/>`;
 }
 
-function quarterNote(x,y){
-  return `
-  <g>
-    <ellipse cx="${x}" cy="${y}" rx="18" ry="13" transform="rotate(-18 ${x} ${y})" fill="#111"/>
-    <line x1="${x+16}" y1="${y-5}" x2="${x+16}" y2="${y-96}" stroke="#111" stroke-width="5" stroke-linecap="round"/>
-  </g>`;
+function quarterNoteImage(x,y){
+  return `<image href="${QUARTER_NOTE_URL}" x="${x-50}" y="${y-34}" width="100" height="100" preserveAspectRatio="xMidYMid meet"/>`;
 }
 
-function halfNote(x,y){
-  return `
-  <g>
-    <ellipse cx="${x}" cy="${y}" rx="18" ry="13" transform="rotate(-18 ${x} ${y})" fill="#f4eedf" stroke="#111" stroke-width="5"/>
-    <line x1="${x+16}" y1="${y-5}" x2="${x+16}" y2="${y-96}" stroke="#111" stroke-width="5" stroke-linecap="round"/>
-  </g>`;
-}
-
-function quarterRest(x,y){
-  // Quarter rest drawn as SVG path, not a font glyph.
+function halfNoteImage(x,y){
+  // keep local half-note drawing for now; the critical rest glyph uses Wikimedia image.
   return `
   <g transform="translate(${x},${y})">
-    <path d="M 0 0 C 26 18, 20 36, -2 47 C 23 60, 26 82, 5 101"
-      fill="none" stroke="#111" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M 2 101 C -11 116, -17 129, -5 145"
-      fill="none" stroke="#111" stroke-width="9" stroke-linecap="round"/>
+    <ellipse cx="0" cy="61" rx="18" ry="13" transform="rotate(-18 0 61)" fill="#f4eedf" stroke="#111" stroke-width="5"/>
+    <line x1="16" y1="56" x2="16" y2="-35" stroke="#111" stroke-width="5" stroke-linecap="round"/>
   </g>`;
+}
+
+function quarterRestImage(x,y){
+  // Direct Wikimedia quarter-rest SVG, scaled up from the original 12x25 file.
+  return `<image href="${QUARTER_REST_URL}" x="${x-34}" y="${y-8}" width="68" height="112" preserveAspectRatio="xMidYMid meet"/>`;
 }
 
 function updateAccuracy(){
