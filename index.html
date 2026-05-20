@@ -17,10 +17,6 @@
       <p>Rhythm Trainer｜Rhythm Training</p>
     </div>
   </div>
-  <div class="top-actions">
-    <button class="small-btn" id="settingsBtn">⚙ 設定 Settings</button>
-    <button class="small-btn" id="helpBtn">? 使用說明 Help</button>
-  </div>
 </header>
 
 <section class="summary-card">
@@ -29,16 +25,16 @@
     <strong>4/4</strong>
   </div>
   <div class="summary-item">
-    <span>小節 Measure</span>
-    <strong><b id="measureNo">1</b> / 4</strong>
+    <span>題目 Question</span>
+    <strong><b id="questionNo">1</b> / 4</strong>
   </div>
   <div class="summary-item">
     <span>拍子 Beat</span>
     <strong><b id="beatNo">-</b> / 4</strong>
   </div>
   <div class="summary-item">
-    <span>連擊 Combo</span>
-    <strong id="combo">0</strong>
+    <span>階段 Stage</span>
+    <strong id="phaseText">Ready</strong>
   </div>
   <div class="summary-item">
     <span>分數 Score</span>
@@ -57,7 +53,7 @@
     <div id="notation"></div>
   </div>
 
-  <div class="cycle-pill" id="cyclePill">流程：題目示範 → 你拍一次 → 系統答案 → 下一題</div>
+  <div class="cycle-pill" id="cyclePill">示範 4 拍 → 你拍 4 拍 → 答案 4 拍 → 下一題｜No pauses between stages</div>
 </section>
 
 <section class="play-area">
@@ -80,7 +76,7 @@
   </div>
 
   <div class="metro-card">
-    <div class="metro-title">節拍器 Metronome</div>
+    <div class="metro-title">速度 Tempo</div>
     <select id="tempo">
       <option>60</option>
       <option>72</option>
@@ -95,8 +91,7 @@
 </section>
 
 <section class="note-card">
-  🔊 如果聽不到聲音，請先點擊畫面任意位置，再按 START。<br>
-  If you can't hear the sound, please tap anywhere on the screen first, then press START.
+  🔊 答案階段改用較明顯拍手聲。If you can't hear it, tap anywhere once, then press START.
 </section>
 
 </div>

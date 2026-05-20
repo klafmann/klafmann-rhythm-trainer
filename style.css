@@ -1,8 +1,19 @@
 *{box-sizing:border-box}
+:root{
+  --bg:#f3efe6;
+  --card:#fffdf8;
+  --ink:#171717;
+  --muted:#4f4a42;
+  --line:#d8cdbb;
+  --gold:#b5842f;
+  --gold2:#d4a64d;
+  --navy:#14213d;
+  --shadow:0 10px 28px rgba(42,32,16,.13);
+}
 body{
   margin:0;
-  background:#faf9f5;
-  color:#111;
+  background:radial-gradient(circle at 30% 0%,#fff 0%,var(--bg) 62%);
+  color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Noto Sans HK","Segoe UI",Arial,sans-serif;
 }
 .app{
@@ -15,7 +26,7 @@ body{
   justify-content:space-between;
   gap:18px;
   align-items:center;
-  margin-bottom:24px;
+  margin-bottom:22px;
 }
 .title-wrap{
   display:flex;
@@ -23,37 +34,27 @@ body{
   gap:14px;
 }
 .music-icon{
-  color:#bd8f34;
-  font-size:38px;
+  color:var(--gold);
+  font-size:40px;
+  font-weight:900;
 }
 h1{
   margin:0;
-  font-size:28px;
+  font-size:30px;
+  color:var(--navy);
   letter-spacing:-.02em;
 }
 .title-wrap p{
   margin:6px 0 0;
-  color:#666;
+  color:var(--muted);
   font-size:19px;
-}
-.top-actions{
-  display:flex;
-  gap:12px;
-}
-.small-btn{
-  background:#fff;
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:12px 18px;
-  box-shadow:0 2px 8px rgba(0,0,0,.04);
-  font-weight:700;
-  cursor:pointer;
+  font-weight:650;
 }
 .summary-card,.stage-card,.judge-card,.metro-card,.note-card{
-  background:#fff;
-  border:1px solid #e7e1d6;
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,.08);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--shadow);
 }
 .summary-card{
   display:grid;
@@ -62,21 +63,27 @@ h1{
   margin-bottom:18px;
 }
 .summary-item{
-  padding:18px 16px;
+  padding:17px 14px;
   text-align:center;
-  border-right:1px solid #ded8cd;
+  border-right:1px solid var(--line);
 }
 .summary-item:last-child{border-right:none}
 .summary-item span{
   display:block;
-  color:#666;
+  color:var(--muted);
   font-size:14px;
+  font-weight:800;
 }
-.summary-item span::first-letter{color:#bd8f34}
 .summary-item strong{
   display:block;
   margin-top:10px;
-  font-size:28px;
+  font-size:27px;
+  color:#000;
+  font-weight:900;
+}
+#phaseText{
+  font-size:22px;
+  color:var(--gold);
 }
 .stage-card{
   padding:22px;
@@ -84,40 +91,35 @@ h1{
 }
 .stage-title{
   text-align:center;
-  color:#555;
-  font-size:18px;
-  font-weight:800;
+  color:var(--navy);
+  font-size:20px;
+  font-weight:900;
   margin-bottom:16px;
 }
 .stage-title b{
-  color:#bd8f34;
+  color:var(--gold);
 }
 .notation-wrap{
-  background:#fffdfa;
-  border-radius:14px;
-  padding:16px;
+  background:#fffaf1;
+  border:1px solid #eadfcf;
+  border-radius:18px;
+  padding:18px;
   min-height:260px;
   display:flex;
   align-items:center;
 }
-#notation{
-  width:100%;
-}
-#notation svg{
-  width:100%;
-  height:auto;
-  display:block;
-}
+#notation{width:100%}
+#notation svg{width:100%;height:auto;display:block}
 .cycle-pill{
   margin:14px auto 0;
   width:max-content;
   max-width:100%;
-  background:#fff;
-  border:1px solid #e7e1d6;
+  background:#fffaf1;
+  border:1px solid var(--line);
   border-radius:999px;
   padding:10px 22px;
-  color:#777;
-  box-shadow:0 4px 14px rgba(0,0,0,.07);
+  color:var(--muted);
+  font-weight:800;
 }
 .play-area{
   display:grid;
@@ -128,13 +130,13 @@ h1{
 }
 .tap-btn{
   border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg,#d4a64d,#bd8f34);
+  border-radius:18px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
   color:#fff;
   font-weight:900;
   font-size:32px;
   cursor:pointer;
-  box-shadow:0 8px 18px rgba(189,143,52,.25);
+  box-shadow:0 10px 22px rgba(181,132,47,.32);
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -142,32 +144,25 @@ h1{
   gap:2px;
   min-height:132px;
 }
-.tap-btn:active{
-  transform:translateY(3px);
-}
+.tap-btn:active{transform:translateY(3px)}
 .tap-btn.disabled{
-  filter:grayscale(.85);
-  opacity:.58;
+  filter:grayscale(.9);
+  opacity:.5;
   cursor:not-allowed;
 }
-.tap-icon{
-  font-size:42px;
-  line-height:1;
-}
-.tap-btn small{
-  font-size:16px;
-}
+.tap-icon{font-size:42px;line-height:1}
+.tap-btn small{font-size:16px}
 .judge-card{
   padding:16px;
   text-align:center;
 }
 .judge-title{
-  color:#666;
-  font-weight:700;
+  color:var(--muted);
+  font-weight:800;
 }
 .judge-main{
   font-size:34px;
-  font-weight:900;
+  font-weight:1000;
   margin:14px 0 18px;
   min-height:42px;
 }
@@ -175,14 +170,14 @@ h1{
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:8px;
-  font-weight:800;
+  font-weight:900;
   font-size:13px;
 }
-.perfect{color:#16803a}
-.good{color:#276eb6}
-.early{color:#a57b20}
-.late{color:#cc5a20}
-.miss{color:#b41f2d}
+.perfect{color:#107337}
+.good{color:#135fa7}
+.early{color:#9a6b12}
+.late{color:#c64e18}
+.miss{color:#a70f21}
 .metro-card{
   padding:16px;
   display:flex;
@@ -190,44 +185,41 @@ h1{
   gap:10px;
 }
 .metro-title{
-  color:#555;
-  font-weight:800;
+  color:var(--navy);
+  font-weight:900;
   text-align:center;
 }
 select{
-  border:1px solid #ddd;
+  border:1px solid var(--line);
   border-radius:12px;
   padding:11px;
   background:#fff;
+  color:#111;
   font-size:16px;
+  font-weight:800;
 }
 .start-btn,.stop-btn{
   border:none;
   border-radius:12px;
   padding:12px;
-  font-weight:900;
+  font-weight:1000;
   cursor:pointer;
 }
-.start-btn{
-  background:#bd8f34;
-  color:#fff;
-}
-.stop-btn{
-  background:#eee;
-  color:#333;
-}
+.start-btn{background:var(--navy);color:#fff}
+.stop-btn{background:#e9e1d3;color:#2d261b}
 .note-card{
   padding:18px 22px;
-  color:#666;
+  color:var(--muted);
+  font-weight:750;
   line-height:1.6;
 }
 .current-symbol{
-  filter:drop-shadow(0 0 8px rgba(189,143,52,.65));
+  filter:drop-shadow(0 0 12px rgba(181,132,47,.9));
 }
 @media(max-width:880px){
-  .topbar,.top-actions{flex-direction:column;align-items:flex-start}
+  .topbar{flex-direction:column;align-items:flex-start}
   .summary-card{grid-template-columns:repeat(2,1fr)}
-  .summary-item{border-bottom:1px solid #ded8cd}
+  .summary-item{border-bottom:1px solid var(--line)}
   .play-area{grid-template-columns:1fr}
   .tap-btn{min-height:116px}
   .judge-scale{grid-template-columns:1fr}
