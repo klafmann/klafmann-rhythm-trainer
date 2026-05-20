@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Klafmann Rhythm Trainer</title>
+  <link rel="stylesheet" href="klafmann-rhythm.css" />
+</head>
+<body>
+  <main class="kr-wrap">
+    <section class="kr-hero">
+      <div>
+        <p class="kr-kicker">Klafmann Practice Lab</p>
+        <h1>節奏練習 Rhythm Trainer</h1>
+        <p class="kr-sub">跟住節拍 Tap，練習穩定拍子、節奏感同視奏前嘅基本 pulse。</p>
+      </div>
+      <div class="kr-scorebox">
+        <div class="kr-score-label">Accuracy</div>
+        <div id="accuracy" class="kr-score">--%</div>
+      </div>
+    </section>
+
+    <section class="kr-panel">
+      <div class="kr-controls">
+        <label>
+          Tempo
+          <select id="tempo">
+            <option value="60">60 BPM</option>
+            <option value="72" selected>72 BPM</option>
+            <option value="84">84 BPM</option>
+            <option value="96">96 BPM</option>
+            <option value="108">108 BPM</option>
+            <option value="120">120 BPM</option>
+          </select>
+        </label>
+
+        <label>
+          Level
+          <select id="level">
+            <option value="1" selected>Level 1｜四分音符</option>
+            <option value="2">Level 2｜二分 + 四分</option>
+            <option value="3">Level 3｜八分音符</option>
+            <option value="4">Level 4｜休止符</option>
+          </select>
+        </label>
+
+        <button id="startBtn" class="kr-btn kr-primary">Start</button>
+        <button id="stopBtn" class="kr-btn">Stop</button>
+      </div>
+
+      <div class="kr-beatline">
+        <div id="beat1" class="kr-beat active">1</div>
+        <div id="beat2" class="kr-beat">2</div>
+        <div id="beat3" class="kr-beat">3</div>
+        <div id="beat4" class="kr-beat">4</div>
+      </div>
+
+      <div id="notation" class="kr-notation">♩ ♩ ♩ ♩</div>
+
+      <button id="tapBtn" class="kr-tap">TAP</button>
+      <p class="kr-hint">手機可直接按 TAP；電腦可按 Spacebar。目標：每一下盡量貼近節拍中心。</p>
+
+      <div class="kr-stats">
+        <div><span id="hits">0</span><small>Good</small></div>
+        <div><span id="early">0</span><small>Early</small></div>
+        <div><span id="late">0</span><small>Late</small></div>
+        <div><span id="miss">0</span><small>Miss</small></div>
+      </div>
+
+      <div id="feedback" class="kr-feedback">揀 Tempo / Level 後按 Start。</div>
+    </section>
+  </main>
+
+  <script src="klafmann-rhythm.js"></script>
+</body>
+</html>
