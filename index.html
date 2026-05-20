@@ -1,76 +1,82 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Klafmann Rhythm Trainer</title>
-  <link rel="stylesheet" href="klafmann-rhythm.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klafmann Practice - Rhythm Trainer</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="kr-wrap">
-    <section class="kr-hero">
-      <div>
-        <p class="kr-kicker">Klafmann Practice Lab</p>
-        <h1>節奏練習 Rhythm Trainer</h1>
-        <p class="kr-sub">跟住節拍 Tap，練習穩定拍子、節奏感同視奏前嘅基本 pulse。</p>
-      </div>
-      <div class="kr-scorebox">
-        <div class="kr-score-label">Accuracy</div>
-        <div id="accuracy" class="kr-score">--%</div>
-      </div>
-    </section>
+<div class="app">
 
-    <section class="kr-panel">
-      <div class="kr-controls">
-        <label>
-          Tempo
-          <select id="tempo">
-            <option value="60">60 BPM</option>
-            <option value="72" selected>72 BPM</option>
-            <option value="84">84 BPM</option>
-            <option value="96">96 BPM</option>
-            <option value="108">108 BPM</option>
-            <option value="120">120 BPM</option>
-          </select>
-        </label>
+<header class="hero">
+  <div>
+    <div class="brand">Klafmann Practice｜節奏訓練</div>
+    <h1>Rhythm Trainer <span>節奏練習</span></h1>
+    <p class="subtitle">Train timing, pulse and groove｜訓練拍子、穩定度與節奏感</p>
+  </div>
 
-        <label>
-          Level
-          <select id="level">
-            <option value="1" selected>Level 1｜四分音符</option>
-            <option value="2">Level 2｜二分 + 四分</option>
-            <option value="3">Level 3｜八分音符</option>
-            <option value="4">Level 4｜休止符</option>
-          </select>
-        </label>
+  <div class="score-panel">
+    <div class="score-label">Accuracy｜準確率</div>
+    <div class="score" id="accuracy">--%</div>
+    <div class="combo" id="combo">COMBO｜連擊 x0</div>
+  </div>
+</header>
 
-        <button id="startBtn" class="kr-btn kr-primary">Start</button>
-        <button id="stopBtn" class="kr-btn">Stop</button>
-      </div>
+<section class="controls">
+  <div class="control">
+    <label>Tempo｜速度</label>
+    <select id="tempo">
+      <option>60</option>
+      <option>72</option>
+      <option selected>84</option>
+      <option>96</option>
+      <option>108</option>
+      <option>120</option>
+    </select>
+  </div>
 
-      <div class="kr-beatline">
-        <div id="beat1" class="kr-beat active">1</div>
-        <div id="beat2" class="kr-beat">2</div>
-        <div id="beat3" class="kr-beat">3</div>
-        <div id="beat4" class="kr-beat">4</div>
-      </div>
+  <div class="control">
+    <label>Level｜程度</label>
+    <select id="level">
+      <option value="1">Level 1｜四分音符 Quarter Notes</option>
+      <option value="2">Level 2｜二分音符 Half Notes</option>
+      <option value="3">Level 3｜八分音符 Eighth Notes</option>
+      <option value="4">Level 4｜休止符 Rests</option>
+    </select>
+  </div>
 
-      <div id="notation" class="kr-notation">♩ ♩ ♩ ♩</div>
+  <button id="startBtn" class="btn primary">START｜開始</button>
+  <button id="stopBtn" class="btn">STOP｜停止</button>
+</section>
 
-      <button id="tapBtn" class="kr-tap">TAP</button>
-      <p class="kr-hint">手機可直接按 TAP；電腦可按 Spacebar。目標：每一下盡量貼近節拍中心。</p>
+<section class="trainer">
+  <div class="beat-row">
+    <div class="beat active" id="b1">1</div>
+    <div class="beat" id="b2">2</div>
+    <div class="beat" id="b3">3</div>
+    <div class="beat" id="b4">4</div>
+  </div>
 
-      <div class="kr-stats">
-        <div><span id="hits">0</span><small>Good</small></div>
-        <div><span id="early">0</span><small>Early</small></div>
-        <div><span id="late">0</span><small>Late</small></div>
-        <div><span id="miss">0</span><small>Miss</small></div>
-      </div>
+  <div class="notation" id="notation"></div>
 
-      <div id="feedback" class="kr-feedback">揀 Tempo / Level 後按 Start。</div>
-    </section>
-  </main>
+  <div class="judgement" id="judge">READY｜準備</div>
 
-  <script src="klafmann-rhythm.js"></script>
+  <button id="tapBtn" class="tap-btn">TAP｜拍</button>
+
+  <p class="hint">Tap the button or press SPACEBAR｜可按 TAP 或鍵盤空白鍵</p>
+
+  <div class="stats">
+    <div class="stat"><span id="perfect">0</span><small>Perfect｜完美</small></div>
+    <div class="stat"><span id="good">0</span><small>Good｜準確</small></div>
+    <div class="stat"><span id="early">0</span><small>Early｜太早</small></div>
+    <div class="stat"><span id="late">0</span><small>Late｜太遲</small></div>
+  </div>
+
+  <p class="sound-note">如沒有聲音，請先按 START 一次；手機請確認不是靜音模式。If there is no sound, tap START once and check silent mode on mobile.</p>
+</section>
+
+</div>
+<script src="app.js"></script>
 </body>
 </html>
