@@ -217,6 +217,12 @@ window.addEventListener('DOMContentLoaded', () => {
   function tick(){
     if(!running) return;
 
+    if(beatIndex >= 4){
+      if(phase === 'user') evaluateUserTurn();
+      nextPhase();
+      if(!running) return;
+    }
+
     updateStageText();
     renderNotation(beatIndex);
     updateTop();
@@ -236,11 +242,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     beatIndex++;
-
-    if(beatIndex >= 4){
-      if(phase === 'user') evaluateUserTurn();
-      nextPhase();
-    }
 
     if(running) timer = setTimeout(tick, beatMs);
   }
